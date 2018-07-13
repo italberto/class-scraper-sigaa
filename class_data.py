@@ -1,5 +1,7 @@
 import json, requests
 import html
+import time
+
 def generate_ids(initial, final):
     return [ x for x in range(initial, final+1)]
 
@@ -28,8 +30,9 @@ def get_class(id, cookie):
         try:
             print('Requesting class id : ' + str(id) + ';')
             r = requests.post(url, data=payload, cookies=cookies, timeout=5)
-        except requests.exceptions.ReadTimeout:
+        except (requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as error:
             print('Requesting class id : ' + str(id) + '[Error, requesting again;]')
+            time.sleep(5)
             continue
         else:
             return r.text
@@ -60,9 +63,12 @@ def process_class_info(html_class, id):
     turma['periodo'] = html.unescape(html_list[2][turma_i:turma_f])
 
     #polo da turma
-    turma_i = html_list[3].find('">')+2
-    turma_f = html_list[3].find('</p>')
-    turma['polo'] = html.unescape(html_list[3][turma_i:turma_f])
+    try:
+        turma_i = html_list[3].find('">')+2
+        turma_f = html_list[3].find('</p>')
+        turma['polo'] = html.unescape(html_list[3][turma_i:turma_f])
+    except:
+        turma['polo'] = ""
 
     print('\t' + turma['codigo'] + turma['nome'] + turma['periodo'] + turma['polo'])
 

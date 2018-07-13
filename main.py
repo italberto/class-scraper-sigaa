@@ -46,10 +46,14 @@ while class_id_list:
     class_data.save_progress_class_list(class_id_list, 'class_id_list')
     actual_id_class = class_id_list.pop(0)
 
-    turma_html = class_data.get_class(actual_id_class, session_id_aut)
+    while True:
+        turma_html = class_data.get_class(actual_id_class, session_id_aut)
 
-    if '<div id="nomeTurma"' in turma_html:
-        turmas.append(class_data.process_class_info(turma_html, actual_id_class))
-        class_data.save_progress_class_list(turmas, 'turmas_processadas')
+        if '<div id="nomeTurma"' in turma_html:
+            turmas.append(class_data.process_class_info(turma_html, actual_id_class))
+            class_data.save_progress_class_list(turmas, 'turmas_processadas')
+            break
+        else:
+            continue
 
 os.system('rm progress_saved_list_id_class/class_id_list.json')
