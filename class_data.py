@@ -47,7 +47,7 @@ def process_class_info(html_class, id):
 
     html_list = html_info.split('<p id=')[1:]
 
-    #codigo da turma
+    #codigo
     turma_i = html_list[0].find('">')+2
     turma_f = html_list[0].find('</p>')
     turma['codigo'] = html.unescape(html_list[0][turma_i:turma_f])
@@ -58,9 +58,16 @@ def process_class_info(html_class, id):
     turma['nome'] = html.unescape(html_list[1][turma_i:turma_f])
 
     #periodo da turma
-    turma_i = html_list[2].find('">')+2
-    turma_f = html_list[2].find('</p>')
+    turma_i = html_list[2].find('">')+4
+    #print(turma_i)
+    turma_f = html_list[2].find(' -', turma_i)
+    #print(turma_f)
     turma['periodo'] = html.unescape(html_list[2][turma_i:turma_f])
+
+    #codigo turma discente
+    turma_i = html_list[2].find('- ', turma_i) + 2
+    turma_f = html_list[2].find(')<', turma_i)
+    turma['codigo_turma'] = html.unescape(html_list[2][turma_i:turma_f])
 
     #polo da turma
     try:
@@ -70,6 +77,6 @@ def process_class_info(html_class, id):
     except:
         turma['polo'] = ""
 
-    print('\t' + turma['codigo'] + turma['nome'] + turma['periodo'] + turma['polo'])
+    print('\t' + turma['codigo'] + turma['nome'] + " (" + turma['periodo'] + " - " +turma['codigo_turma'] + ")" + turma['polo'])
 
     return turma
